@@ -159,7 +159,7 @@ const HealthSafety = () => {
           );
           setChartData(updatedData);
 
-          const response = await fetch("/api/returnInformation", {
+          const response = await fetch("/api/recommendation", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ weatherType, chartData: updatedData }),

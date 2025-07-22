@@ -56,7 +56,7 @@ export const getSuggestion = (temp: number, condition: string) => {
 export async function getSummary(weatherData: WeatherData): Promise<string> {
   console.log("Weather data in getSummary:", weatherData);
   try {
-    const response = await fetch("http://localhost:5000/api/summary", {
+    const response = await fetch("/api/summary", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

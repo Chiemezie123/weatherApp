@@ -1,4 +1,4 @@
-// src/features/weather/WeatherService.ts
+
 import apiClient from "@/lib/apiClients"
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY
