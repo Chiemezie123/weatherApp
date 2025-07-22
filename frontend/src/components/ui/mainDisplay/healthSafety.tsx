@@ -13,9 +13,10 @@ import uv from "@/assets/images/Sun.png";
 import drive from "@/assets/images/Sport Utility Vehicle.png";
 import clothing from "@/assets/images/T Shirt.png";
 import heat from "@/assets/images/Thermometer.png";
+import type { HourlyWeatherData, ProcessedChartData } from "./activities";
 
 const HealthSafety = () => {
-  const { weather} = useWeather(LAT, LON);
+  const { weather } = useWeather(LAT, LON);
 
   const [weatherType, setWeatherType] = useState<
     "outdoor" | "umbrella" | "clothing" | "vehicle" | "heatstroke" | "uvindex"
@@ -25,9 +26,46 @@ const HealthSafety = () => {
     title: "Loading...",
     description: "Please wait while we generate a summary.",
   });
-  const [loadingRec, setLoadingRec] = useState(false);
 
-  const [chartData, setChartData] = useState([]);
+  type ChartDataItem =
+    | {
+        time: string;
+        score: number;
+        precipitation?: undefined;
+        temperature?: undefined;
+        uvi?: undefined;
+      }
+    | {
+        time: string;
+        precipitation: number;
+        score?: undefined;
+        temperature?: undefined;
+        uvi?: undefined;
+      }
+    | {
+        time: string;
+        temperature: number;
+        precipitation: number;
+        score?: undefined;
+        uvi?: undefined;
+      }
+    | {
+        time: string;
+        score: number;
+        precipitation?: undefined;
+        temperature?: undefined;
+        uvi?: undefined;
+      }
+    | {
+        time: string;
+        uvi: number;
+        score?: undefined;
+        precipitation?: undefined;
+        temperature?: undefined;
+      }
+    | { time: string };
+
+  const [chartData, setChartData] = useState<ChartDataItem[]>([]);
 
   const selectImage = [
     {
@@ -56,7 +94,16 @@ const HealthSafety = () => {
     },
   ];
 
-  function processChartData(hourlyData, type) {
+  function processChartData(
+    hourlyData: Array<ProcessedChartData>,
+    type:
+      | "outdoor"
+      | "umbrella"
+      | "clothing"
+      | "vehicle"
+      | "uvindex"
+      | "heatstroke"
+  ) {
     return hourlyData
       .filter((_, i) => i % 3 === 0)
       .map((hour) => {
@@ -96,18 +143,27 @@ const HealthSafety = () => {
     if (weather?.hourly) {
       const fetchRecommendation = async () => {
         try {
-          const updatedData = processChartData(weather.hourly, weatherType);
-          setChartData(updatedData);
-          setLoadingRec(true);
-
-          const response = await fetch(
-            "/api/returnInformation",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ weatherType, chartData: updatedData }),
-            }
+          const updatedData = processChartData(
+            weather.hourly.map((hour: HourlyWeatherData) => ({
+              dt: hour.dt,
+              temp: hour.temp,
+              humidity: hour.humidity,
+              pop: hour.pop ?? 0,
+              clouds: hour.clouds,
+              uvi: hour.uvi,
+              wind_speed: hour.wind_speed,
+              aqi:
+                typeof hour.aqi === "number" ? { value: hour.aqi } : undefined,
+            })),
+            weatherType
           );
+          setChartData(updatedData);
+
+          const response = await fetch("/api/returnInformation", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ weatherType, chartData: updatedData }),
+          });
 
           const data = await response.json();
 
@@ -119,13 +175,13 @@ const HealthSafety = () => {
               description: "We couldn't generate a summary at this time.",
             });
           }
-        } catch (error) {
+        } catch {
           setRecommendation({
             title: "Error generating recommendation",
             description: "Please try again later.",
           });
         } finally {
-          setLoadingRec(false);
+          console.log("Recommendation fetched successfully");
         }
       };
 
@@ -151,7 +207,9 @@ const HealthSafety = () => {
           title={recommendation?.title}
           description={recommendation?.description}
           chartDetails={
-            chartData.length > 0 ? { chartData, category:weatherType } : undefined
+            chartData.length > 0
+              ? { chartData, category: weatherType }
+              : undefined
           }
           imgSrc={
             selectImage.find((item) => item.name === weatherType)?.imgSrc || ""

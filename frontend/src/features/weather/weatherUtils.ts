@@ -1,3 +1,43 @@
+
+interface SummaryResponse {
+  choices?: Array<{
+    message?: {
+      content?: string;
+    };
+  }>;
+}
+
+
+
+interface WeatherData {
+  temperature: number;
+  weather: string;
+  humidity: number;
+  windspeed: number;
+  uvIndex: number;
+  Cloudiness: number;
+}
+
+
+
+interface HourlyWeatherData {
+  temp: number;
+  uvi: number;
+  pop: number; 
+  wind_speed: number;
+  humidity: number;
+}
+
+interface HourlyWeatherData {
+  temp: number;
+  uvi: number;
+  pop: number; 
+  wind_speed: number;
+  humidity: number;
+}
+
+
+
 export const getSuggestion = (temp: number, condition: string) => {
   const lowerCondition = condition.toLowerCase();
   if (lowerCondition.includes("rain")) return "Take an umbrella 🌧️";
@@ -13,7 +53,7 @@ export const getSuggestion = (temp: number, condition: string) => {
 
 
 
-export async function getSummary(weatherData) {
+export async function getSummary(weatherData: WeatherData): Promise<string> {
   console.log("Weather data in getSummary:", weatherData);
   try {
     const response = await fetch("http://localhost:5000/api/summary", {
@@ -24,12 +64,12 @@ export async function getSummary(weatherData) {
       body: JSON.stringify({ weatherData }),
     });
 
-    const data = await response.json();
+    const data: SummaryResponse = await response.json();
 
     console.log(data, "lets see the data");
 
     const message = data.choices?.[0]?.message?.content;
-    return message;
+    return message || "No summary available";
   } catch (error) {
     console.error("Error fetching recommendations:", error);
     return "Sorry, something went wrong.";
@@ -57,8 +97,11 @@ export function toPercentage(value: number, total: number) {
 
 
 
+ 
 
-export function calculateOutdoorScore(hour) {
+
+
+export function calculateOutdoorScore(hour: HourlyWeatherData): number {
   const temp = hour.temp;
   const uvi = hour.uvi;
   const precipitation = hour.pop * 100;
@@ -101,6 +144,7 @@ export function calculateOutdoorScore(hour) {
 
   return Math.max(0, Math.min(100, score));
 }
+
 
 
 
