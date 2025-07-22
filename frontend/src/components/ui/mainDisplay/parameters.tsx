@@ -7,7 +7,7 @@ import { LAT, LON } from "@/constants/option";
 import { useWeather } from "@/hooks/useWeather";
 
 const Parameters = () => {
-  const { loading, error, weather } = useWeather(LAT, LON);
+  const {  weather } = useWeather(LAT, LON);
 
   const parameters = [
     {

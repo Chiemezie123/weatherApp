@@ -15,7 +15,7 @@ import clothing from "@/assets/images/T Shirt.png";
 import heat from "@/assets/images/Thermometer.png";
 
 const HealthSafety = () => {
-  const { weather, error, loading } = useWeather(LAT, LON);
+  const { weather} = useWeather(LAT, LON);
 
   const [weatherType, setWeatherType] = useState<
     "outdoor" | "umbrella" | "clothing" | "vehicle" | "heatstroke" | "uvindex"
@@ -101,7 +101,7 @@ const HealthSafety = () => {
           setLoadingRec(true);
 
           const response = await fetch(
-            "http://localhost:5000/api/returnInformation",
+            "/api/returnInformation",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },

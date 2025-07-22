@@ -74,7 +74,7 @@ export const useWeather = (lat: number, lon: number) => {
 
     const interval = setInterval(() => {
       fetchData()
-    }, 10 * 60 * 1000) // 10 minutes
+    }, 10 * 60 * 1000) 
 
     return () => clearInterval(interval) 
   }, [lat, lon])

@@ -7,7 +7,7 @@
   font-family: "Satoshi";
   src: url("/src/assets/fonts/Satoshi-Black.woff2") format("woff2"),
     url("/src/assets/fonts/Satoshi-Black.ttf") format("truetype");
-  font-weight: 900; /* Changed from 700 to 900 for Black */
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
@@ -16,7 +16,7 @@
   font-family: "Satoshi";
   src: url("/src/assets/fonts/Satoshi-Bold.woff2") format("woff2"),
     url("/src/assets/fonts/Satoshi-Bold.ttf") format("truetype");
-  font-weight: 700; /* Changed from 600 to 700 for Bold */
+  font-weight: 700; 
   font-style: normal;
   font-display: swap;
 }
@@ -138,7 +138,7 @@ body,
   }
 
   body {
-    @apply font-satoshi font-normal text-black; /* Changed font-regular to font-normal */
+    @apply font-satoshi font-normal text-black; 
   }
 }
 

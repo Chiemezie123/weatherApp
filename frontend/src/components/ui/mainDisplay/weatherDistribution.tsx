@@ -12,7 +12,7 @@ import {
 import { getSummary } from "@/features/weather/weatherUtils";
 
 const WeatherDistribution = () => {
-  const { weather, loading, error } = useWeather(LAT, LON);
+  const { weather} = useWeather(LAT, LON);
 
   const [summary, setSummary] = useState("");
 

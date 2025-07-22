@@ -8,8 +8,7 @@ import Mountain from "@/assets/images/Mountain.png";
 import Running from "@/assets//images/Man_Running.png";
 import Picnic from "@/assets/images/Umbrella_On_Ground.png";
 import Stargazing from "@/assets/images/Shooting_Star.png";
-import Cycling from "@/assets/images/Woman_Biking.png";
-import Gardening from "@/assets/images/House_With_Garden.png";
+
 
 import type { ActivityCardProps } from "@/components/cards/activityCard";
 

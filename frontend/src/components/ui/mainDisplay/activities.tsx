@@ -7,20 +7,20 @@ import Mountain from "@/assets/images/Mountain.png";
 import Running from "@/assets//images/Man_Running.png";
 import Picnic from "@/assets/images/Umbrella_On_Ground.png";
 import Stargazing from "@/assets/images/Shooting_Star.png";
-import Cycling from "@/assets/images/Woman_Biking.png";
-import Gardening from "@/assets/images/House_With_Garden.png";
 
 
 const Activities = () => {
-  const { weather, error, loading } = useWeather(LAT, LON);
+  const { weather } = useWeather(LAT, LON);
+  const [loadingRec, setLoadingRec] = useState(false);
 
   const [weatherType, setWeatherType] = useState<
     "hiking" | "running" | "picnic" | "stargazing"
   >("hiking");
 
-
-  
-
+  const [recommendation, setRecommendation] = useState({
+    title: "Loading...",
+    description: "Please wait while we generate a summary.",
+  });
 
   const [chartData, setChartData] = useState([]);
 
@@ -41,56 +41,154 @@ const Activities = () => {
       name: "stargazing",
       imgSrc: Stargazing,
     },
-    
   ];
+
+
+
+
+
+
+
 
   function processChartData(hourlyData, type) {
     return hourlyData
       .filter((_, i) => i % 3 === 0)
       .map((hour) => {
-        const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
+        const time = new Date(hour.dt * 1000);
+        const timeLabel = time.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         });
 
-        switch (type) {
-          case "hiking":
-            return {
-                time,
-            };
-          case "running":
-            return {};
-          case "picnic":
-            return {};
-          case "stargazing":
-            return {};
-         
-          default:
-            return { time };
+        const temp = hour.temp;
+        const humidity = hour.humidity;
+        const pop = hour.pop;
+        const clouds = hour.clouds;
+        const uvi = hour.uvi;
+        const wind = hour.wind_speed;
+        const aqi = hour.aqi?.value || 1;
+
+        let score = 0;
+
+        if (type === "picnic") {
+          const hourOfDay = time.getHours();
+          const isDaytime = hourOfDay >= 6 && hourOfDay <= 18;
+          if (isDaytime) {
+            if (temp >= 18 && temp <= 28) score++;
+            if (humidity < 60) score++;
+            if (pop < 0.2) score++;
+            if (clouds < 40) score++;
+            if (uvi < 6) score++;
+            if (wind < 5) score++;
+            if (aqi <= 2) score++;
+          }
+
+          score = Math.min(5, (score / 7) * 5);
         }
+
+        if (type === "hiking") {
+          const hourOfDay = time.getHours();
+          const isDaytime = hourOfDay >= 6 && hourOfDay <= 18;
+          if (isDaytime) {
+            if (temp >= 10 && temp <= 25) score++;
+            if (pop < 0.1) score++;
+            if (uvi < 6) score++;
+            if (wind < 6) score++;
+            if (aqi <= 2) score++;
+          }
+
+          score = Math.min(5, score);
+        }
+
+         if (type === "running") {
+          const hourOfDay = time.getHours();
+          const isDaytime = hourOfDay >= 6 && hourOfDay <= 18;
+          if (isDaytime) {
+            if (temp >= 10 && temp <= 25) score++;
+            if (pop < 0.1) score++;
+            if (uvi < 6) score++;
+            if (wind < 6) score++;
+            if (aqi <= 2) score++;
+          }
+
+          score = Math.min(5, score);
+        }
+
+        if (type === "stargazing") {
+          const hourOfDay = time.getHours();
+          const isNight = hourOfDay >= 20 || hourOfDay <= 4;
+
+          if (isNight) {
+            if (temp >= 5 && temp <= 20) score++;
+            if (humidity < 80) score++;
+            if (pop < 0.1) score++;
+            if (clouds < 20) score++;
+            if (aqi <= 2) score++;
+          }
+
+          score = Math.min(5, score);
+        }
+
+        return {
+          time: timeLabel,
+          value: score,
+        };
       });
   }
 
+
+
+
+
+
   useEffect(() => {
     if (weather?.hourly) {
-      const updatedData = processChartData(weather?.hourly, weatherType);
-      setChartData(updatedData);
+      const fetchRecommendation = async () => {
+        try {
+          const updatedData = processChartData(weather.hourly, weatherType);
+          setChartData(updatedData);
+          setLoadingRec(true);
+
+          const response = await fetch(
+            "api/returnInformation",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ weatherType, chartData: updatedData }),
+            }
+          );
+
+          const data = await response.json();
+
+          if (data?.title && data?.description) {
+            setRecommendation(data);
+          } else {
+            setRecommendation({
+              title: "Recommendation not available",
+              description: "We couldn't generate a summary at this time.",
+            });
+          }
+        } catch (error) {
+          setRecommendation({
+            title: "Error generating recommendation",
+            description: "Please try again later.",
+          });
+        } finally {
+          setLoadingRec(false);
+        }
+      };
+
+      fetchRecommendation();
     }
   }, [weather, weatherType]);
 
-  console.log(
-    "Rendering chart with data:",
-    weather?.hourly,
-    "for type:",
-    weatherType
-  );
-
   return (
     <div className="w-full flex gap-4 items-start">
+
       <div className="w-full flex flex-col items-start max-w-[262px] gap-[15px]">
         {activityCardData.map((card, index) => (
           <ActivityCard
-          check={weatherType}
+            check={weatherType}
             key={index}
             imgSrc={card.imgSrc}
             text={card.text}
@@ -98,12 +196,15 @@ const Activities = () => {
           />
         ))}
       </div>
+
       <div className="w-full">
         <Graphcard
-          title="Good day to be Outdoor!"
-          description="Today is a good day to be outdoor. Ideal time: 1 PM - 3 AM."
-           chartDetails={
-            chartData.length > 0 ? { chartData, activity:weatherType } : undefined
+          title={recommendation?.title}
+          description={recommendation?.description}
+          chartDetails={
+            chartData.length > 0
+              ? { chartData, activity: weatherType }
+              : undefined
           }
           imgSrc={
             selectActivityImage.find((item) => item.name === weatherType)

@@ -5,7 +5,7 @@ interface GraphcardProps {
   title: string;
   description: string;
   chartDetails?: WeatherChartProps;
-  imgSrc?: string; // Optional image source for the card
+  imgSrc?: string; 
 }
 
 const Graphcard = ({

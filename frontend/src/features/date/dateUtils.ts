@@ -6,7 +6,7 @@ export const getFormattedDate = () => {
     month: "long",
     year: "numeric",
   };
-  return date.toLocaleDateString("en-US", options); // "Thursday, July 24, 2025"
+  return date.toLocaleDateString("en-US", options); 
 };
 
 export const getGreeting = () => {
@@ -32,9 +32,9 @@ export function getCurrentTimeFormatted() {
   const minutes = now.getMinutes();
   const ampm = hours >= 12 ? 'PM' : 'AM';
 
-  // Convert 24hr to 12hr format
+ 
   hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
+  hours = hours ? hours : 12; 
 
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
 
