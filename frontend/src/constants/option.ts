@@ -13,77 +13,87 @@ import Gardening from "@/assets/images/House_With_Garden.png";
 
 import type { ActivityCardProps } from "@/components/cards/activityCard";
 
-
-
-export const LAT = 6.5244; 
-export   const LON = 3.3792; 
+export const LAT = 6.5244;
+export const LON = 3.3792;
 
 export const healthCardData: ActivityCardProps[] = [
   {
     imgSrc: umbrella,
-    text: "Umbrella",
+    text: "umbrella",
+    check: "",
     onClick: () => {},
   },
 
   {
     imgSrc: outdoor,
-    text: "Outdoor",
+    text: "outdoor",
     onClick: () => {},
+    check: "",
   },
 
   {
     imgSrc: uv,
-    text: "UV Index",
+    text: "uvindex",
     onClick: () => {},
+    check: "",
   },
   {
     imgSrc: drive,
-    text: "Driving Safety",
+    text: "vehicle",
     onClick: () => {},
+    check: "",
   },
   {
     imgSrc: clothing,
-    text: "Clothing",
+    text: "clothing",
     onClick: () => {},
+    check: "",
   },
   {
     imgSrc: heat,
     text: "Heat Stroke",
     onClick: () => {},
+    check: "",
   },
 ];
 
 export const activityCardData: ActivityCardProps[] = [
   {
     imgSrc: Mountain,
-    text: "Hiking",
+    text: "hiking",
     onClick: () => {},
+    check: "",
   },
 
   {
     imgSrc: Running,
-    text: "Running",
+    text: "running",
     onClick: () => {},
+    check: "",
   },
 
   {
     imgSrc: Picnic,
-    text: "Picnic",
+    text: "picnic",
     onClick: () => {},
+    check: "",
   },
   {
     imgSrc: Stargazing,
-    text: "Stargazing",
+    text: "stargazing",
     onClick: () => {},
+    check: "",
   },
-  {
-    imgSrc: Cycling,
-    text: "Cycling",
-    onClick: () => {},
-  },
-  {
-    imgSrc: Gardening,
-    text: "Gardening",
-    onClick: () => {},
-  },
+ 
 ];
+
+export const activityToWeatherMetric = {
+  hiking: "outdoor",
+  running: "outdoor",
+  picnic: "umbrella",
+  stargazing: "uvindex",
+  cycling: "vehicle",
+  gardening: "clothing",
+} as const;
+
+export type ActivityType = keyof typeof activityToWeatherMetric;

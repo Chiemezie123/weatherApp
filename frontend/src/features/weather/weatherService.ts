@@ -3,13 +3,10 @@ import apiClient from "@/lib/apiClients"
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY
 
-export const getWeatherByCity = async (city: string) => {
-  const response = await apiClient.get(`/weather?q=${city}&appid=${API_KEY}&units=metric`)
-  return response.data
-}
 
 
-console.log("VITE_WEATHER_API_KEY:", import.meta.env.VITE_WEATHER_API_KEY);
+
+
 
 
 export const getWeatherByLatLon = async (lat: number, lon: number) => {

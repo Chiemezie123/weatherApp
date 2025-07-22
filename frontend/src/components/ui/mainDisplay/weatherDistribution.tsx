@@ -40,7 +40,7 @@ const WeatherDistribution = () => {
   const current = weather?.current;
 
   return (
-    <div className="w-full xl:h-[222px] flex flex-col xl:flex-row gap-4 items-start">
+    <div className="w-full xl:h-[250px] flex flex-col xl:flex-row gap-4 items-start">
       <MainDisplayCard
         temperature={current?.temp ? `${Math.round(current.temp)}°` : "N/A"}
         shortDetail={current?.weather[0]?.description || "N/A"}

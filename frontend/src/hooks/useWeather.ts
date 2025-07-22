@@ -12,8 +12,22 @@ interface WeatherData {
     clouds: number;
     pressure: number;
     visibility: number;
-
   };
+
+  hourly: {
+    dt: number;
+    temp: number;
+    weather: {
+      description: string;
+      icon: string;
+    }[];
+    humidity: number;
+    wind_speed: number;
+    uvi: number;
+    clouds: number;
+    pressure: number;
+    visibility: number;
+  }[];
 
   daily: {
     dt: number;
